@@ -1,0 +1,91 @@
+const objection = require('objection')
+const jwt = require('jsonwebtoken')
+
+const authMiddleware = require('./security/auth')
+const UserModel = require('../models/UserModel')
+const { jwtSecret } = require('../config')
+const { NotFoundError } = require('objection')
+
+
+const usersRoutes = ({ app, logger }) => {
+
+  app.post('/sign-up', async (req, res) => {
+    const { username, email, password } = req.body
+
+    const user = await UserModel.query().findOne({ username })
+
+    if (user) {
+      res.status(409).send({ singError: 'Unable to create this user' })
+      return
+    }
+
+    const [hash, salt] = UserModel.hashPassword(password)
+
+    try {
+      const { passwordHash, passwordSalt, ...newUser } = await UserModel.query().insertAndFetch({
+        username: username,
+        email: email,
+        passwordHash: hash,
+        passwordSalt: salt
+      })
+
+      res.status(201).send(newUser)
+    } catch (e) {
+      logger.error(e.message)
+      res.status(501).send({ serverError: 'Something went wrong during registration' })
+    }
+  })
+
+  app.post('/sign-in', async (req, res) => {
+    const { username, password } = req.body
+
+    const serchedUser = await UserModel.query().findOne({ username })
+
+    if (!serchedUser) {
+      logger.warn('User not found with username: ' + username)
+      res.status(501).send({ serverError: 'Something went wrong during connection' })
+    }
+
+    const [hashedPassword] = UserModel.hashPassword(password, serchedUser.passwordSalt)
+
+    if (hashedPassword !== serchedUser.passwordHash) {
+      res.status(401).send({ error: 'Unable to connect' })
+    }
+
+    const token = jwt.sign({
+      user: { userId: serchedUser.user_id, username: serchedUser.username }
+    }, jwtSecret, { expiresIn: '30 min', algorithm: 'HS512' })
+    res.send({ token })
+  })
+
+  app.get('/users/:username', authMiddleware, async (req, res) => {
+    const { username: paramsUsername } = req.params
+    const { authentication } = req.headers
+    const { user: { username } } = jwt.decode(authentication)
+
+    if (paramsUsername !== username) {
+      logger.error('🛑 AccessViolation: User trying to access doesn\'t correspond')
+      res.status(403).send({ error: 'User\'s resource doesn\'t own this one' })
+    }
+
+    try {
+      const { passwordHash, passwordSalt, ...searchedUser } = await UserModel.query().findOne({ username })
+
+      if (!searchedUser) {
+        res.status(404).send({ errorMessage: `User with username ${paramsUsername} doesn't exist` })
+        return
+      }
+
+      res.send(searchedUser)
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        res.status(404).send({ errorMessage: `User with username '${paramsUsername}' does not exist` })
+      }
+
+      logger.error(err)
+      res.status(500).send({ errorMessage: 'Something went wrong' })
+    }
+  })
+}
+
+module.exports = usersRoutes

@@ -1,10 +1,20 @@
-import express from 'express'
-import pino from 'pino'
+const express = require('express')
+const pino = require('pino')
+const knex = require('knex')
+const { Model } = require('objection')
 
-import config from './config.js'
+const knexfile = require('./knexfile.js')
+const config = require('./config.js')
 
 const app = express()
 app.use(express.json())
+const database = knex(knexfile)
+Model.knex(database)
+
+const publicRoutes = require('./routes/publicRoutes')
+const usersRoutes = require('./routes/usersRoutes.js')
+const postsRoutes = require('./routes/postsRoutes')
+
 const logger = pino({
   transport: {
     target: 'pino-pretty',
@@ -18,7 +28,11 @@ const logger = pino({
 
 app.get('/', (req, res) => {
   logger.trace(req)
-  res.send({ message: 'You are on the entrypoint of Vova-blog social network' })
+  res.status(418).send({ yourOrder: '🍵' })
 })
+
+publicRoutes({ app, logger })
+usersRoutes({ app, logger })
+postsRoutes({ app, logger })
 
 app.listen(config.port, () => logger.info(`App started on port: ${config.port}`))

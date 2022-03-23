@@ -8,7 +8,6 @@
     "nodemon": "^2.0.15",
     "prettier": "^2.6.0"
   },
-  "type": "module",
   "dependencies": {
     "db-errors": "^0.2.3",
     "dotenv": "^16.0.0",
