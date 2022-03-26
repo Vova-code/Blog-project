@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const pino = require('pino')
 const knex = require('knex')
 const { Model } = require('objection')
@@ -7,6 +8,7 @@ const knexfile = require('./knexfile.js')
 const config = require('./config.js')
 
 const app = express()
+app.use(cors())
 app.use(express.json())
 const database = knex(knexfile)
 Model.knex(database)

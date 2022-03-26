@@ -39,17 +39,24 @@ const usersRoutes = ({ app, logger }) => {
   app.post('/sign-in', async (req, res) => {
     const { username, password } = req.body
 
+    if (username === null || password === null) {
+      res.status(422).send({errorMessage: 'Some params are missing in the request. username or password'})
+    }
+
     const serchedUser = await UserModel.query().findOne({ username })
+    console.log(serchedUser)
 
     if (!serchedUser) {
       logger.warn('User not found with username: ' + username)
       res.status(501).send({ serverError: 'Something went wrong during connection' })
+      return
     }
 
     const [hashedPassword] = UserModel.hashPassword(password, serchedUser.passwordSalt)
 
     if (hashedPassword !== serchedUser.passwordHash) {
       res.status(401).send({ error: 'Unable to connect' })
+      return
     }
 
     const token = jwt.sign({

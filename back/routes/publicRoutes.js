@@ -6,8 +6,8 @@ const publicRoutes = ({ app, logger }) => {
     const { username } = req.query
 
     if (username != null) {
-      const { user_id: userId } = await UserModel.query().select('user_id').findOne({ username })
-      const userPosts = await PostModel.query().where('user_id', Number (userId))
+      const { username: author } = await UserModel.query().select('username').findOne({ username })
+      const userPosts = await PostModel.query().where('author', author)
       res.send(userPosts)
       return
     }

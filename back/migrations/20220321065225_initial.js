@@ -13,8 +13,8 @@ exports.up = (knex) => {
       table.bigint('created_at').notNullable()
       table.bigint('last_modification')
       table.json('likes')
-      table.integer('user_id').unsigned()
-      table.foreign('user_id').references('users.user_id')
+      table.string('author').notNullable()
+      table.foreign('author').references('users.username')
     })
 }
 
