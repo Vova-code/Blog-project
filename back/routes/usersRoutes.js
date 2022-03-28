@@ -44,7 +44,6 @@ const usersRoutes = ({ app, logger }) => {
     }
 
     const serchedUser = await UserModel.query().findOne({ username })
-    console.log(serchedUser)
 
     if (!serchedUser) {
       logger.warn('User not found with username: ' + username)
@@ -62,7 +61,7 @@ const usersRoutes = ({ app, logger }) => {
     const token = jwt.sign({
       user: { userId: serchedUser.user_id, username: serchedUser.username }
     }, jwtSecret, { expiresIn: '30 min', algorithm: 'HS512' })
-    res.send({ token })
+    res.send({ token: token, username: username })
   })
 
   app.get('/users/:username', authMiddleware, async (req, res) => {

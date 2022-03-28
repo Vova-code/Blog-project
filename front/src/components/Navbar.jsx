@@ -1,7 +1,19 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useContext } from 'react'
+
+import { HiOutlineUserCircle } from 'react-icons/hi'
+import AppContext from '../utils/AppContext'
 
 const Navbar = ({ userLogged }) => {
+  const { username } = useContext(AppContext)
+  const router = useRouter()
+
+  const displayIcon = () => {
+    return !(router.asPath === '/login' || router.asPath === '/signin' || (router.asPath === '/' && !userLogged));
+
+  }
 
   return (
     <div
@@ -12,6 +24,10 @@ const Navbar = ({ userLogged }) => {
           <h3 className="ml-4 text-3xl font-semibold">BlogiBloga</h3>
         </div>
       </Link>
+      {displayIcon() &&
+      <Link href={`/${username}/profile`}>
+        <HiOutlineUserCircle className="text-5xl cursor-pointer"/>
+      </Link>}
       {!userLogged &&
       <div>
         <Link href="/signup">

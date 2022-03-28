@@ -9,12 +9,12 @@ body,
   height: 100%;
 }
 
-html::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 8px;
   background-color: #e1e1e1;
 }
 
-html::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background: #000;
 }
