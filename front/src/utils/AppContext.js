@@ -1,28 +1,28 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { publicEntrypoint, usersEntrPoint } from './AxiosUtils'
+import { publicEntrypoint, usersEntryPoint } from './AxiosUtils'
 
 const AppContext = createContext({})
 
 export const AppContextProvider = (props) => {
   const [posts, setPosts] = useState([])
-  const [userCredentials, setUserCredentials] = useState({ token: '', username: '' })
+  const [userCredentials, setUserCredentials] = useState({ token: null, username: '' })
   const router = useRouter()
 
   useEffect(() => {
     const savedCreds = localStorage.getItem('blogibloga-token')
     if (savedCreds !== null) {
-      setUserCredentials(savedCreds)
+      setUserCredentials(JSON.parse(savedCreds))
     }
     publicEntrypoint.get('/posts').then(res => setPosts(res.data))
   }, [userCredentials])
 
   const login = (credentials) => {
-    usersEntrPoint.post('/sign-in', credentials)
+    usersEntryPoint.post('/sign-in', credentials)
       .then(res => {
         setUserCredentials(res.data)
-        localStorage.setItem('blogibloga-credentials', res.data)
+        localStorage.setItem('blogibloga-credentials', JSON.stringify(res.data))
         router.push('/')
       })
   }
@@ -33,13 +33,17 @@ export const AppContextProvider = (props) => {
     router.push('/login')
   }
 
-  const isUserLogged = userCredentials.token !== ''
+  const getAuthentication = () => {
+    return userCredentials.token !== null ? userCredentials.token : null
+  }
+
+  const isUserLogged = userCredentials.token !== null
   const username = userCredentials.username
 
   return (
     <AppContext.Provider
       {...props}
-      value={{ posts, isUserLogged, username, login, logout }}
+      value={{ posts, isUserLogged, username, getAuthentication, login, logout }}
     />
   )
 }

@@ -12,7 +12,6 @@ const Navbar = ({ userLogged }) => {
 
   const displayIcon = () => {
     return !(router.asPath === '/login' || router.asPath === '/signin' || (router.asPath === '/' && !userLogged));
-
   }
 
   return (

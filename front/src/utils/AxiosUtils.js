@@ -4,6 +4,10 @@ export const publicEntrypoint = axios.create({
   baseURL: 'http://localhost:3001/api'
 })
 
-export const usersEntrPoint = axios.create({
+export const usersEntryPoint = axios.create({
   baseURL: 'http://localhost:3001'
+})
+
+export const postsEntryPoint = axios.create({
+  baseURL: 'http://localhost:3001/posts'
 })

@@ -21,7 +21,7 @@ const postsRoutes = ({ app, logger }) => {
   }
 
   app.post('/posts/add/:username', authMiddleware, async (req, res) => {
-    const { title, content } = req.body
+    const { title, content, author } = req.body
 
     if (checkEligibility(req, res) === null) {
       return
@@ -30,7 +30,7 @@ const postsRoutes = ({ app, logger }) => {
 
     try {
       const user = await UserModel.query().findOne({ username })
-      if (user === null) {
+      if (user === null || user.username !== author) {
         res.status(404).send({ errorMessage: 'User not found !' })
       }
 
@@ -38,7 +38,7 @@ const postsRoutes = ({ app, logger }) => {
         title: title,
         content: content,
         created_at: Date.now(),
-        user_id: user.user_id
+        author: author
       })
       res.send(newPost)
     } catch (err) {

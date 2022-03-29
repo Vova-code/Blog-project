@@ -41,13 +41,13 @@ const Login = () => {
                 <Field placeholder="Pseudo" className="z-30 w-full px-2 py-4 rounded-xl ring-1 ring-black" type="text"
                        name="username"/>
                 <ErrorMessage className="-z-10 relative bottom-4 px-2 pt-4 pb-2 text-red-800 font-semibold
-                bg-red-400 rounded-b-lg transition-all duration-300"
-                              name="username" component="div"/>
+                bg-red-400 rounded-b-lg transition-all duration-300" name="username" component="div"/>
               </div>
               <div className="w-4/5 mb-6">
                 <Field placeholder="Mot de passe" className="w-full px-2 py-4 rounded-xl ring-1 ring-black"
                        type="password" name="password"/>
-                <ErrorMessage name="password" component="div"/>
+                <ErrorMessage className="-z-10 relative bottom-4 px-2 pt-4 pb-2 text-red-800 font-semibold
+                bg-red-400 rounded-b-lg transition-all duration-300" name="password" component="div"/>
               </div>
               <button
                 className="bg-black text-white px-4 py-2 rounded-2xl hover:ring hover:ring-red-600 transition-all duration-300"
