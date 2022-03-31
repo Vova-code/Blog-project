@@ -30,7 +30,7 @@ const authMiddleware = async (req, res, next) => {
       res.send({error: 'Unable for you to access resource'})
       return
     }
-    res.status(500).send({errorMessage: 'Somethinng went wrong during auth'})
+    res.status(500).send({errorMessage: 'Something went wrong during auth'})
   }
 }
 

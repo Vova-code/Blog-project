@@ -1,11 +1,11 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/image'
 import React, { useCallback, useContext, useState } from 'react'
-import AppContext from '../utils/AppContext'
-import { postsEntryPoint } from '../utils/AxiosUtils'
+import AppContext from '../../utils/AppContext'
+import { postsEntryPoint } from '../../utils/AxiosUtils'
 
 const PostsMenuView = () => {
-  const { username, getAuthentication } = useContext(AppContext)
+  const { getUsername, getAuthentication } = useContext(AppContext)
   const [showValidation, setShowValidation] = useState(false)
 
   const animate = useCallback(() => {
@@ -15,7 +15,7 @@ const PostsMenuView = () => {
   return (
     <div className="w-full max-h-[88.7%] mt-20 px-8 pt-12 flex flex-col items-center overflow-y-scroll">
       <Formik
-        initialValues={{ title: '', content: '', author: username }}
+        initialValues={{ title: '', content: '', author: getUsername }}
         validate={values => {
           const errors = {}
           const formValidated = null
@@ -28,7 +28,7 @@ const PostsMenuView = () => {
           return errors
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          postsEntryPoint.post(`/add/${username}`, values, {
+          postsEntryPoint.post(`/add/${getUsername}`, values, {
             headers: { 'authentication': getAuthentication() }
           })
             .then(res => {

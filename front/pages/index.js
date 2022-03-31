@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useContext } from 'react'
-import Navbar from '../src/components/Navbar'
-import Post from '../src/components/Post'
+import Navbar from '../src/components/molecules/Navbar'
+import Post from '../src/components/molecules/Post'
 
 import AppContext from '../src/utils/AppContext'
 import styles from '../styles/Home.module.css'
@@ -13,7 +13,7 @@ const Home = () => {
   const { posts, isUserLogged } = useContext(AppContext)
 
   return (
-    <div className="relative h-full">
+    <div className="relative">
       <Head>
         <title>BlogiBloga</title>
         <meta name="description" content="Say what's in your head, not in your heart"/>
@@ -24,7 +24,7 @@ const Home = () => {
         <Navbar userLogged={isUserLogged}/>
       </div>
 
-      <div className="h-screen flex flex-col mt-8 py-6 px-2 items-center">
+      <div className="flex flex-col mt-8 py-6 px-2 items-center">
         {posts.map((post, index) => (<Post key={index} post={post} isAdminInterface={false} />))}
       </div>
 

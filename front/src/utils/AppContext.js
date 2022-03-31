@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { publicEntrypoint, usersEntryPoint } from './AxiosUtils'
@@ -11,7 +11,7 @@ export const AppContextProvider = (props) => {
   const router = useRouter()
 
   useEffect(() => {
-    const savedCreds = localStorage.getItem('blogibloga-token')
+    const savedCreds = localStorage.getItem('blogibloga-credentials')
     if (savedCreds !== null) {
       setUserCredentials(JSON.parse(savedCreds))
     }
@@ -29,7 +29,7 @@ export const AppContextProvider = (props) => {
 
   const logout = () => {
     setUserCredentials({ token: null, username: '' })
-    localStorage.removeItem('blogibloga-token')
+    localStorage.removeItem('blogibloga-credentials')
     router.push('/login')
   }
 
@@ -38,6 +38,7 @@ export const AppContextProvider = (props) => {
   }
 
   const isUserLogged = userCredentials.token !== null
+
   const username = userCredentials.username
 
   return (

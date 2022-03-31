@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 
+const authMiddleware = require('./security/auth')
 const { jwtSecret } = require('../config')
 const PostModel = require('../models/PostModel')
 const UserModel = require('../models/UserModel')
-const authMiddleware = require('./security/auth')
 
 const postsRoutes = ({ app, logger }) => {
 

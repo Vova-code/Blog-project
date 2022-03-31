@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import Navbar from '../src/components/Navbar'
+import Navbar from '../src/components/molecules/Navbar'
 
 const Signup = () => {
   return (

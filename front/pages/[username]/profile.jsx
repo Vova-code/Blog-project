@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from 'react'
-import Navbar from '../../src/components/Navbar'
-import NewPostMenuView from '../../src/components/NewPostMenuView'
-import PostsMenuView from '../../src/components/PostsMenuView'
+import Navbar from '../../src/components/molecules/Navbar'
+import NewPostMenuView from '../../src/components/views/NewPostMenuView'
+import PostsMenuView from '../../src/components/views/PostsMenuView'
 import AppContext from '../../src/utils/AppContext'
 
 
