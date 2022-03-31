@@ -5,7 +5,7 @@ import AppContext from '../../utils/AppContext'
 import { postsEntryPoint } from '../../utils/AxiosUtils'
 
 const PostsMenuView = () => {
-  const { getUsername, getAuthentication } = useContext(AppContext)
+  const { username, getAuthentication } = useContext(AppContext)
   const [showValidation, setShowValidation] = useState(false)
 
   const animate = useCallback(() => {
@@ -15,7 +15,7 @@ const PostsMenuView = () => {
   return (
     <div className="w-full max-h-[88.7%] mt-20 px-8 pt-12 flex flex-col items-center overflow-y-scroll">
       <Formik
-        initialValues={{ title: '', content: '', author: getUsername }}
+        initialValues={{ title: '', content: '', author: username }}
         validate={values => {
           const errors = {}
           const formValidated = null
@@ -28,7 +28,7 @@ const PostsMenuView = () => {
           return errors
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          postsEntryPoint.post(`/add/${getUsername}`, values, {
+          postsEntryPoint.post(`/add/${username}`, values, {
             headers: { 'authentication': getAuthentication() }
           })
             .then(res => {

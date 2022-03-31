@@ -7,8 +7,6 @@ import Post from '../src/components/molecules/Post'
 import AppContext from '../src/utils/AppContext'
 import styles from '../styles/Home.module.css'
 
-const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
-
 const Home = () => {
   const { posts, isUserLogged } = useContext(AppContext)
 

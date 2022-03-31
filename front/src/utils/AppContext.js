@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import React, { createContext, useEffect, useState } from 'react'
 
-import { publicEntrypoint, usersEntryPoint } from './AxiosUtils'
+import { postsEntryPoint, publicEntrypoint, usersEntryPoint } from './AxiosUtils'
 
 const AppContext = createContext({})
 
@@ -16,7 +16,7 @@ export const AppContextProvider = (props) => {
       setUserCredentials(JSON.parse(savedCreds))
     }
     publicEntrypoint.get('/posts').then(res => setPosts(res.data))
-  }, [userCredentials])
+  }, [posts])
 
   const login = (credentials) => {
     usersEntryPoint.post('/sign-in', credentials)
@@ -41,10 +41,18 @@ export const AppContextProvider = (props) => {
 
   const username = userCredentials.username
 
+  //Post section
+  const addPost = values => {
+    postsEntryPoint.post(`/add/${userCredentials.username}`, values, {
+      headers: { 'authentication': userCredentials.token }
+    })
+  }
+
   return (
     <AppContext.Provider
       {...props}
-      value={{ posts, isUserLogged, username, getAuthentication, login, logout }}
+      value={{ posts, isUserLogged, username, addPost,
+        getAuthentication, login, logout }}
     />
   )
 }
