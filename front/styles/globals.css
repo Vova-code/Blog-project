@@ -5,16 +5,50 @@
 html,
 body,
 #__next {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+@layer components {
+    .alertTypeInfo {
+        @apply bg-blue-200 border-blue-400
+    }
+
+    .alertTypeValidate {
+        @apply bg-green-200 border-green-400
+    }
+
+    .alertTypeError {
+        @apply bg-red-200 border-red-400
+    }
+
+    .alertTitleInfo {
+        @apply text-blue-200 bg-blue-600
+    }
+
+    .alertTitleValidate {
+        @apply text-green-200 bg-green-600
+    }
+    .alertTitleError {
+        @apply text-red-200 bg-red-600
+    }
+    .alertTextInfo {
+        @apply text-blue-800
+    }
+    .alertTextValidate {
+        @apply text-green-800
+    }
+    .alertTextError {
+        @apply text-red-800
+    }
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
-  background-color: #e1e1e1;
+    width: 8px;
+    background-color: #e1e1e1;
 }
 
 *::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background: #000;
+    border-radius: 4px;
+    background: #000;
 }

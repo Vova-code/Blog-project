@@ -1,11 +1,16 @@
+import { useContext, useState } from 'react'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 
 import Navbar from '../src/components/molecules/Navbar'
+import AppContext from '../src/utils/AppContext'
 
 const Signup = () => {
+  const { signup } = useContext(AppContext)
+  const [userError, setUserError] = useState(null)
+
   return (
     <div className="relative w-full h-full flex flex-col justify-center items-center">
       <Head>
@@ -31,7 +36,11 @@ const Signup = () => {
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             const { validatePassword, ...filteredValues } = values
-            alert(JSON.stringify(filteredValues, null, 2))
+            signup(filteredValues).then(res => {
+              if (res.status === 409) {
+
+              }
+            })
             setSubmitting(false)
           }, 400)
         }}>

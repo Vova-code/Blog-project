@@ -5,7 +5,7 @@ import PostsMenuView from '../../src/components/views/PostsMenuView'
 import AppContext from '../../src/utils/AppContext'
 
 
-const Profile = ({ username }) => {
+const Settings = ({ username }) => {
   const { logout, posts } = useContext(AppContext)
   const menuComponents = [
     { name: 'Mes post', component: <PostsMenuView posts={posts}/> },
@@ -61,4 +61,4 @@ export const getStaticProps = async () => {
   return { props: { username: 'MarvelBoy' } }
 }
 
-export default Profile
+export default Settings

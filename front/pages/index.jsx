@@ -1,11 +1,10 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { useContext } from 'react'
 import Navbar from '../src/components/molecules/Navbar'
 import Post from '../src/components/molecules/Post'
 
+import { VscGithub } from 'react-icons/vsc'
 import AppContext from '../src/utils/AppContext'
-import styles from '../styles/Home.module.css'
 
 const Home = () => {
   const { posts, isUserLogged } = useContext(AppContext)
@@ -23,19 +22,16 @@ const Home = () => {
       </div>
 
       <div className="flex flex-col mt-8 py-6 px-2 items-center">
-        {posts.map((post, index) => (<Post key={index} post={post} isAdminInterface={false} />))}
+        {posts.map((post, index) => (<Post key={index} post={post} isAdminInterface={false}/>))}
       </div>
 
-      <footer className="">
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16}/>
-          </span>
+      <footer className="flex justify-center items-center h-16 border-t border-black">
+        <p>Blogibloga school project made by{' '}</p>
+        <a className="flex justify-center items-center hover:text-red-600"
+           href="https://github.com/Vova-code/Blog-project"
+           target="_blank" rel="noopener noreferrer">
+          <VscGithub className="ml-2 mr-2"/>
+          <p className="font-semibold hover:text-red-600">Vova-code</p>
         </a>
       </footer>
     </div>

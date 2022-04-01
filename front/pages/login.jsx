@@ -1,14 +1,28 @@
+import { useContext, useEffect } from 'react'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useContext } from 'react'
+import { useRouter } from 'next/router'
 
 import Navbar from '../src/components/molecules/Navbar'
+import AlertBox from '../src/components/molecules/AlertBox'
+
 import AppContext from '../src/utils/AppContext'
+import { handleSession } from '../src/utils/SessionUtils'
 
 const Login = () => {
-  const { login } = useContext(AppContext)
+  const { login, showAlert } = useContext(AppContext)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (handleSession(router) !== null) {
+      setTimeout(() => {
+        showAlert()
+      }, 1000)
+    }
+  }, [])
+
 
   return (
     <div className="relative w-full h-full flex flex-col justify-center items-center">
@@ -59,6 +73,9 @@ const Login = () => {
           </div>
         )}
       </Formik>
+      <div className="absolute bottom-[10em]">
+        <AlertBox type="erreur" message="Votre session a expiré, veuillez vous reconnecter"/>
+      </div>
       <div className="flex">
         <p>Pas encore inscrit ?</p>
         <Link href="/signup">
@@ -70,3 +87,7 @@ const Login = () => {
 }
 
 export default Login
+
+export const getStaticProps = async (props) => {
+  return { props: {} }
+}

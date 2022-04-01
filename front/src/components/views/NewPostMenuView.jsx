@@ -1,16 +1,12 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik'
+import React, { useContext } from 'react'
 import Image from 'next/image'
-import React, { useCallback, useContext, useState } from 'react'
+import { ErrorMessage, Field, Form, Formik } from 'formik'
+
 import AppContext from '../../utils/AppContext'
-import { postsEntryPoint } from '../../utils/AxiosUtils'
+import AlertBox from '../molecules/AlertBox'
 
 const PostsMenuView = () => {
-  const { username, getAuthentication } = useContext(AppContext)
-  const [showValidation, setShowValidation] = useState(false)
-
-  const animate = useCallback(() => {
-    return showValidation === true ? 'animate-save-alert' : 'hidden'
-  }, [showValidation])
+  const { username, addPost, showAlertBox } = useContext(AppContext)
 
   return (
     <div className="w-full max-h-[88.7%] mt-20 px-8 pt-12 flex flex-col items-center overflow-y-scroll">
@@ -18,7 +14,6 @@ const PostsMenuView = () => {
         initialValues={{ title: '', content: '', author: username }}
         validate={values => {
           const errors = {}
-          const formValidated = null
           if (!values.title) {
             errors.title = 'Veuillez renseigner un titre'
           }
@@ -28,19 +23,10 @@ const PostsMenuView = () => {
           return errors
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          postsEntryPoint.post(`/add/${username}`, values, {
-            headers: { 'authentication': getAuthentication() }
-          })
-            .then(res => {
-              if (res.status === 200) {
-                setShowValidation(true)
-                resetForm({ title: '', content: '', author: username })
-              }
-            })
-          setTimeout(() => {
-            setShowValidation(false)
-            setSubmitting(false)
-          }, 3000)
+          addPost(values)
+          showAlertBox()
+          setSubmitting(false)
+          resetForm({ title: '', content: '', author: username })
         }}>
         {({ isSubmitting }) => (
           <div className="w-4/5 flex">
@@ -69,18 +55,7 @@ const PostsMenuView = () => {
           </div>
         )}
       </Formik>
-      {showValidation &&
-      <div className={animate()}>
-        <div
-          className="p-2 bg-green-200 items-center text-white leading-none rounded-full flex inline-flex border border-green-400"
-          role="alert">
-        <span className="flex rounded-full bg-green-800 uppercase px-2 py-1 text-white text-xs font-bold mr-3">
-          Posté
-        </span>
-          <span className="font-semibold mr-2 text-green-800 text-left flex-auto">Votre post est en ligne</span>
-        </div>
-      </div>
-      }
+      <AlertBox type='succès' message='Votre post à été publié !' />
     </div>
   )
 }

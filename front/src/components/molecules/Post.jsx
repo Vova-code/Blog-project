@@ -8,7 +8,7 @@ const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numer
 const Post = ({ post, isAdminInterface }) => {
   return (
     <div className="relative w-4/5 mb-20 p-12 border-black border bg-white/75 rounded-2xl
-               hover:shadow-lg hover:shadow-2xl hover:cursor-pointer transition-all durations-600">
+               hover:shadow-2xl hover:cursor-pointer transition-all durations-600">
       {isAdminInterface &&
       <div className="absolute flex top-4 right-4">
         <HiOutlinePencil className="mr-4 text-xl hover:text-blue-600"/>

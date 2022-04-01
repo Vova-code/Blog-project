@@ -29,7 +29,8 @@ const usersRoutes = ({ app, logger }) => {
         passwordSalt: salt
       })
 
-      res.status(201).send(newUser)
+      const token = getToken(newUser)
+      res.status(201).send({ token: '', username: newUser.username })
     } catch (e) {
       logger.error(e.message)
       res.status(501).send({ serverError: 'Something went wrong during registration' })
@@ -58,9 +59,7 @@ const usersRoutes = ({ app, logger }) => {
       return
     }
 
-    const token = jwt.sign({
-      user: { userId: serchedUser.user_id, username: serchedUser.username }
-    }, jwtSecret, { expiresIn: '30 min', algorithm: 'HS512' })
+    const token = getToken(serchedUser)
     res.send({ token: token, username: username })
   })
 
@@ -68,11 +67,6 @@ const usersRoutes = ({ app, logger }) => {
     const { username: paramsUsername } = req.params
     const { authentication } = req.headers
     const { user: { username } } = jwt.decode(authentication)
-
-    if (paramsUsername !== username) {
-      logger.error('🛑 AccessViolation: User trying to access doesn\'t correspond')
-      res.status(403).send({ error: 'User\'s resource doesn\'t own this one' })
-    }
 
     try {
       const { passwordHash, passwordSalt, ...searchedUser } = await UserModel.query().findOne({ username })
@@ -92,6 +86,12 @@ const usersRoutes = ({ app, logger }) => {
       res.status(500).send({ errorMessage: 'Something went wrong' })
     }
   })
+
+  const getToken = (user) => {
+    return jwt.sign({
+      user: { userId: user.user_id, username: user.username }
+    }, jwtSecret, { expiresIn: '30 min', algorithm: 'HS512' })
+  }
 }
 
 module.exports = usersRoutes

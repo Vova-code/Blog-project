@@ -27,7 +27,7 @@ const authMiddleware = async (req, res, next) => {
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       logger.error(`Token error: ${err.message}`)
-      res.send({error: 'Unable for you to access resource'})
+      res.status(401).send({type: 'TOKEN', error: 'Unable for you to access resource'})
       return
     }
     res.status(500).send({errorMessage: 'Something went wrong during auth'})

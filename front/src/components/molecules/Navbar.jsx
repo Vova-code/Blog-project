@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import { HiOutlineUserCircle } from 'react-icons/hi'
 import AppContext from '../../utils/AppContext'
@@ -10,10 +10,13 @@ const Navbar = ({ userLogged }) => {
   const { username } = useContext(AppContext)
   const router = useRouter()
 
-  const profileUrl = `/${username}/profile`
+  useEffect(() => {
+    if (username !== '')
+      router.push(`/${username}/settings`)
+  }, [username])
 
   const displayIcon = () => {
-    return !(router.asPath === '/login' || router.asPath === '/signin' || (router.asPath === '/' && !userLogged))
+    return !(router.asPath === '/login' || router.asPath === '/signin' || router.asPath === '/signup' || (router.asPath === '/' && !userLogged))
   }
 
   return (
@@ -25,8 +28,8 @@ const Navbar = ({ userLogged }) => {
           <h3 className="ml-4 text-3xl font-semibold">BlogiBloga</h3>
         </div>
       </Link>
-      {displayIcon() &&
-      <Link href="/MarvelBoy/profile">
+      {(displayIcon() && username !== '') &&
+      <Link href={`/${username}/settings`}>
         <HiOutlineUserCircle className="text-5xl cursor-pointer"/>
       </Link>}
       {!userLogged &&
