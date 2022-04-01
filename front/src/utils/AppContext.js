@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import { instanceOf } from 'prop-types'
-import React, { createContext, useCallback, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 
 import { postsEntryPoint, publicEntrypoint, usersEntryPoint } from './AxiosUtils'
+import { memorizeCredentials, retrieveCredentials, unvalidateCredentials } from './StorageUtils'
 
 const AppContext = createContext({})
 
@@ -13,12 +13,20 @@ export const AppContextProvider = (props) => {
   const router = useRouter()
 
   useEffect(() => {
-    const savedCreds = localStorage.getItem('blogibloga-credentials')
+    const savedCreds = retrieveCredentials()
     if (savedCreds !== null) {
-      setUserCredentials(JSON.parse(savedCreds))
+      setUserCredentials(savedCreds)
     }
     publicEntrypoint.get('/posts').then(res => setPosts(res.data))
   }, [])
+
+  const sessionExpiredRedirect = (err) => {
+    if (err instanceof Error && err.message.includes('401')) {
+      setUserCredentials({ token: null, username: '' })
+      localStorage.removeItem('blogibloga-credentials')
+      router.push({ pathname: '/login', query: { error: 'sessionExpired' } })
+    }
+  }
 
   const showAlert = () => {
     setShowAlertBox(true)
@@ -31,7 +39,7 @@ export const AppContextProvider = (props) => {
     usersEntryPoint.post('/sign-in', credentials)
       .then(res => {
         setUserCredentials(res.data)
-        localStorage.setItem('blogibloga-credentials', JSON.stringify(res.data))
+        memorizeCredentials(res.data)
         router.push('/')
       })
   }
@@ -50,7 +58,7 @@ export const AppContextProvider = (props) => {
 
   const logout = () => {
     setUserCredentials({ token: null, username: '' })
-    localStorage.removeItem('blogibloga-credentials')
+    unvalidateCredentials()
     router.push('/login')
   }
 
@@ -62,25 +70,31 @@ export const AppContextProvider = (props) => {
 
   const username = userCredentials.username
 
-  //Post section
+//Post section
   const addPost = values => {
     postsEntryPoint.post(`/add/${userCredentials.username}`, values, {
       headers: { 'authentication': userCredentials.token }
     })
       .catch(err => {
-        if (err instanceof Error && err.message.includes('401')) {
-          setUserCredentials({ token: null, username: '' })
-          localStorage.removeItem('blogibloga-credentials')
-          router.push({ pathname: '/login', query: { error: 'sessionExpired'} })
-        }
+        sessionExpiredRedirect(err)
       })
+  }
+
+  const getUserPosts = () => {
+    return postsEntryPoint.get(`/all/${userCredentials.username}`, {
+      headers: { 'authentication': userCredentials.token }
+    })
+      .then(res => res.data)
+      .catch(err => sessionExpiredRedirect(err))
   }
 
   return (
     <AppContext.Provider
       {...props}
-      value={{ posts, isUserLogged, username, showAlertBox, showAlert, addPost,
-        getAuthentication, signup, login, logout }}
+      value={{
+        posts, isUserLogged, username, showAlertBox, showAlert, getUserPosts, addPost,
+        getAuthentication, signup, login, logout
+      }}
     />
   )
 }

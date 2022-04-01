@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-const authMiddleware = require('./security/auth')
 const { jwtSecret } = require('../config')
+const authMiddleware = require('./security/auth')
 const PostModel = require('../models/PostModel')
 const UserModel = require('../models/UserModel')
 
@@ -47,8 +47,11 @@ const postsRoutes = ({ app, logger }) => {
     }
   })
 
-  app.get('/posts/all/:username', authMiddleware, (req, res) => {
+  app.get('/posts/all/:username', authMiddleware, async (req, res) => {
     const username = checkEligibility(req, res)
+
+    const userPosts = await PostModel.query().where('author', username)
+    res.send(userPosts)
   })
 }
 
