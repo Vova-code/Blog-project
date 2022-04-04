@@ -10,11 +10,6 @@ const Navbar = ({ userLogged }) => {
   const { username } = useContext(AppContext)
   const router = useRouter()
 
-  useEffect(() => {
-    if (username !== '')
-      router.push(`/${username}/settings`)
-  }, [username])
-
   const displayIcon = () => {
     return !(router.asPath === '/login' || router.asPath === '/signin' || router.asPath === '/signup' || (router.asPath === '/' && !userLogged))
   }
