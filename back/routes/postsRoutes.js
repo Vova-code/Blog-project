@@ -47,6 +47,32 @@ const postsRoutes = ({ app, logger }) => {
     }
   })
 
+  app.post('/posts/delete', authMiddleware, async (req, res) => {
+    const { postId } = req.body
+
+    try {
+      await PostModel.query().deleteById(Number(postId))
+      res.send('OK')
+    } catch (err) {
+      logger.error(err)
+      res.status(500).send({ errorMessage: 'Something went wrong' })
+    }
+  })
+
+  app.post('/posts/update', authMiddleware, async (req, res) => {
+    const { postId, post } = req.body
+
+    try {
+      const updatedPost = await PostModel.query()
+        .patch({title: post.title, content: post.content, last_modification: Date.now()})
+        .where('post_id', '=', postId)
+      res.send('OK')
+    } catch (err) {
+      logger.error(err)
+      res.status(500).send({ errorMessage: 'Something went wrong' })
+    }
+  })
+
   app.get('/posts/all/:username', authMiddleware, async (req, res) => {
     const username = checkEligibility(req, res)
 

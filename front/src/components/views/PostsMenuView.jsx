@@ -6,7 +6,6 @@ import Post from '../molecules/Post'
 const PostsMenuView = () => {
   const { usersPosts, getUserPosts } = useContext(AppContext)
 
-
   useEffect(async () => {
     getUserPosts()
   }, [])

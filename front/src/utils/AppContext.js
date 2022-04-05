@@ -12,7 +12,7 @@ export const AppContextProvider = (props) => {
   const [usersPosts, setUsersPosts] = useState([])
 
   const [showAlertBox, setShowAlertBox] = useState(false)
-  const [popin, setPopin] = useState({title: '', content: '', isOpen: false})
+  const [popin, setPopin] = useState({title: '', content: '', id: '', isOpen: false})
 
   const router = useRouter()
 
@@ -41,13 +41,13 @@ export const AppContextProvider = (props) => {
     }, 2000)
   }
 
-  const openPopin = (title, content) => {
-    setPopin({title: title, content: content, isOpen: true})
+  const openPopin = (title, content, id) => {
+    console.log(popin)
+    setPopin({title: title, content: content, id: id, isOpen: true})
   }
 
   const closePopin = () => {
-    console.log("close")
-    setPopin({title: '', content: '', isOpen: false})
+    setPopin({title: '', content: '', id: '', isOpen: false})
   }
 
   const login = (credentials) => {
@@ -89,10 +89,17 @@ export const AppContextProvider = (props) => {
   const addPost = values => {
     postsEntryPoint.post(`/add/${userCredentials.username}`, values, {
       headers: { 'authentication': userCredentials.token }
+    }).catch(err => sessionExpiredRedirect(err))
+  }
+
+  const deletePost = () => {
+    postsEntryPoint.post('/delete', { postId: popin.id }, {
+      headers: { 'authentication': userCredentials.token }
+    }).then(() => {
+      getUserPosts()
+      closePopin()
     })
-      .catch(err => {
-        sessionExpiredRedirect(err)
-      })
+      .catch(err => sessionExpiredRedirect(err))
   }
 
   const getUserPosts = () => {
@@ -108,7 +115,7 @@ export const AppContextProvider = (props) => {
       {...props}
       value={{
         posts, isUserLogged, username, usersPosts, showAlertBox, popin,
-        showAlert, openPopin, closePopin, getUserPosts, addPost,
+        showAlert, openPopin, closePopin, getUserPosts, addPost, deletePost,
         getAuthentication, signup, login, logout
       }}
     />

@@ -16,7 +16,7 @@ const Post = ({ post, isAdminInterface }) => {
       <div className="absolute flex top-4 right-4">
         <HiOutlinePencil className="mr-4 text-xl hover:text-blue-600"/>
         <HiOutlineTrash className="mr-4 text-xl hover:text-red-600"
-                        onClick={() => openPopin('Supprimer définitivement', 'Voulez-vous supprimer ce post ?')}/>
+                        onClick={() => openPopin('Supprimer définitivement', 'Voulez-vous supprimer ce post ?', post.post_id)}/>
       </div>}
       <h2 className="mb-4 font-semibold text-2xl">{post.title}</h2>
       <span>{post.content}</span>

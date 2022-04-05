@@ -10,7 +10,7 @@ import AppContext from '../../src/utils/AppContext'
 
 
 const Settings = ({ username }) => {
-  const { logout, posts, openPopin } = useContext(AppContext)
+  const { logout, posts, deletePost } = useContext(AppContext)
   const menuComponents = [
     { name: 'Mes post', component: <PostsMenuView posts={posts}/> },
     { name: 'Ajouter un post', component: <NewPostMenuView/> }
@@ -31,7 +31,7 @@ const Settings = ({ username }) => {
   return (
     <div className="relative w-full h-full flex">
       <Navbar userLogged/>
-      <Popin title='' content='' handleValidate={() => {}}/>
+      <Popin title='' content='' handleValidate={deletePost}/>
       <div
         className="relative w-3/12 h-[88.7%] mt-20 pt-6 flex flex-col items-center border-r border-gray-300 bg-gray-200 shadow-2xl">
         <div className="mb-8 px-4 pb-4 flex justify-center text-2xl w-full border-b border-black">
