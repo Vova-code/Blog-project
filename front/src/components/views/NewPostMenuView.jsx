@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
-import Image from 'next/image'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
+import Image from 'next/image'
 
 import AppContext from '../../utils/AppContext'
 import AlertBox from '../molecules/AlertBox'
 
 const PostsMenuView = () => {
-  const { username, addPost, showAlertBox } = useContext(AppContext)
+  const { username, addPost, getUserPosts, showAlertBox } = useContext(AppContext)
 
   return (
     <div className="w-full max-h-[88.7%] mt-20 px-8 pt-12 flex flex-col items-center overflow-y-scroll">
@@ -24,9 +24,10 @@ const PostsMenuView = () => {
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           addPost(values)
-          showAlertBox()
+          getUserPosts()
           setSubmitting(false)
           resetForm({ title: '', content: '', author: username })
+          showAlertBox()
         }}>
         {({ isSubmitting }) => (
           <div className="w-4/5 flex">

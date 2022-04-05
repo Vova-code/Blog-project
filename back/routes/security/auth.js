@@ -27,6 +27,9 @@ const authMiddleware = async (req, res, next) => {
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       logger.error(`Token error: ${err.message}`)
+      if (err.message.includes('jwt expired')) {
+        res.status(307).send({type: 'TOKEN', error: 'Session expires'})
+      }
       res.status(401).send({type: 'TOKEN', error: 'Unable for you to access resource'})
       return
     }

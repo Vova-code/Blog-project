@@ -9,7 +9,11 @@ const AppContext = createContext({})
 export const AppContextProvider = (props) => {
   const [posts, setPosts] = useState([])
   const [userCredentials, setUserCredentials] = useState({ token: null, username: '' })
+  const [usersPosts, setUsersPosts] = useState([])
+
   const [showAlertBox, setShowAlertBox] = useState(false)
+  const [popin, setPopin] = useState({title: '', content: '', isOpen: false})
+
   const router = useRouter()
 
   useEffect(() => {
@@ -17,11 +21,13 @@ export const AppContextProvider = (props) => {
     if (savedCreds !== null) {
       setUserCredentials(savedCreds)
     }
-    publicEntrypoint.get('/posts').then(res => setPosts(res.data))
+    publicEntrypoint.get('/posts').then(res => {
+      setPosts(res.data)
+    })
   }, [])
 
   const sessionExpiredRedirect = (err) => {
-    if (err instanceof Error && err.message.includes('401')) {
+    if (err instanceof Error && err.message.includes('307')) {
       setUserCredentials({ token: null, username: '' })
       localStorage.removeItem('blogibloga-credentials')
       router.push({ pathname: '/login', query: { error: 'sessionExpired' } })
@@ -32,7 +38,16 @@ export const AppContextProvider = (props) => {
     setShowAlertBox(true)
     setTimeout(() => {
       setShowAlertBox(false)
-    }, 3000)
+    }, 2000)
+  }
+
+  const openPopin = (title, content) => {
+    setPopin({title: title, content: content, isOpen: true})
+  }
+
+  const closePopin = () => {
+    console.log("close")
+    setPopin({title: '', content: '', isOpen: false})
   }
 
   const login = (credentials) => {
@@ -81,10 +96,10 @@ export const AppContextProvider = (props) => {
   }
 
   const getUserPosts = () => {
-    return postsEntryPoint.get(`/all/${userCredentials.username}`, {
+    postsEntryPoint.get(`/all/${userCredentials.username}`, {
       headers: { 'authentication': userCredentials.token }
     })
-      .then(res => res.data)
+      .then(res => setUsersPosts(res.data))
       .catch(err => sessionExpiredRedirect(err))
   }
 
@@ -92,7 +107,8 @@ export const AppContextProvider = (props) => {
     <AppContext.Provider
       {...props}
       value={{
-        posts, isUserLogged, username, showAlertBox, showAlert, getUserPosts, addPost,
+        posts, isUserLogged, username, usersPosts, showAlertBox, popin,
+        showAlert, openPopin, closePopin, getUserPosts, addPost,
         getAuthentication, signup, login, logout
       }}
     />

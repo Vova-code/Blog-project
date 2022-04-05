@@ -1,12 +1,16 @@
 import React, { useCallback, useContext, useState } from 'react'
+
+import Button from '../../src/components/atoms/Button'
 import Navbar from '../../src/components/molecules/Navbar'
+import Popin from '../../src/components/molecules/Popin'
 import NewPostMenuView from '../../src/components/views/NewPostMenuView'
 import PostsMenuView from '../../src/components/views/PostsMenuView'
+
 import AppContext from '../../src/utils/AppContext'
 
 
 const Settings = ({ username }) => {
-  const { logout, posts } = useContext(AppContext)
+  const { logout, posts, openPopin } = useContext(AppContext)
   const menuComponents = [
     { name: 'Mes post', component: <PostsMenuView posts={posts}/> },
     { name: 'Ajouter un post', component: <NewPostMenuView/> }
@@ -24,15 +28,15 @@ const Settings = ({ username }) => {
     setCurrentMenu(menuComponents[index])
   }
 
-
   return (
     <div className="relative w-full h-full flex">
       <Navbar userLogged/>
+      <Popin title='' content='' handleValidate={() => {}}/>
       <div
         className="relative w-3/12 h-[88.7%] mt-20 pt-6 flex flex-col items-center border-r border-gray-300 bg-gray-200 shadow-2xl">
         <div className="mb-8 px-4 pb-4 flex justify-center text-2xl w-full border-b border-black">
-          <p>Bonjour, </p>
-          <span className="font-bold"> {username}</span>
+          <p className="mr-2">Bonjour,</p>
+          <span className="font-bold">{username}</span>
         </div>
         {menuComponents.map((menu, index) =>
           <p key={index}
@@ -42,11 +46,9 @@ const Settings = ({ username }) => {
             {menu.name}
           </p>
         )}
-        <button
-          onClick={() => logout()}
-          className="absolute bottom-8 px-4 py-2 font-semibold rounded-2xl bg-red-500 hover:ring hover:ring-black transition-all duration-300">
-          Déconnexion
-        </button>
+        <div className="absolute bottom-8">
+          <Button handleClick={logout} type="cancel" text="Déconnexion"/>
+        </div>
       </div>
       {currentMenu.component}
     </div>

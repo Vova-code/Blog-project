@@ -41,6 +41,19 @@ body,
     .alertTextError {
         @apply text-red-800
     }
+
+    .button_primary {
+        @apply px-4 py-2 font-semibold rounded-2xl text-white bg-black hover:ring hover:ring-red-600 transition-all duration-300
+    }
+    .button_secondary {
+        @apply px-4 py-2 font-semibold rounded-2xl text-black bg-white border border-black hover:ring hover:ring-black transition-all duration-300
+    }
+    .button_cancel {
+        @apply px-4 py-2 font-semibold rounded-2xl text-white bg-red-500 hover:ring hover:ring-black transition-all duration-300
+    }
+    .button_alert {
+        @apply px-4 py-2 font-semibold rounded-2xl bg-yellow-500 hover:ring hover:ring-black transition-all duration-300
+    }
 }
 
 *::-webkit-scrollbar {
