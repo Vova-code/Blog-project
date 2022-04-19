@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import Button from '../../src/components/atoms/Button'
 import Navbar from '../../src/components/molecules/Navbar'
@@ -10,11 +10,18 @@ import AppContext from '../../src/utils/AppContext'
 
 
 const Settings = ({ username }) => {
-  const { logout, posts, deletePost } = useContext(AppContext)
+  const { logout, usersPosts, deletePost, getUserPosts } = useContext(AppContext)
+
+  useEffect(() => {
+    getUserPosts()
+  }, [])
+
+
   const menuComponents = [
-    { name: 'Mes post', component: <PostsMenuView posts={posts}/> },
+    { name: 'Mes post', component: <PostsMenuView usersPosts={usersPosts}/> },
     { name: 'Ajouter un post', component: <NewPostMenuView/> }
   ]
+
   const [currentMenu, setCurrentMenu] = useState(menuComponents[0])
 
   const selectedItem = useCallback((menuName) => {
@@ -34,13 +41,13 @@ const Settings = ({ username }) => {
       <Popin title='' content='' handleValidate={deletePost}/>
       <div
         className="relative w-3/12 h-[88.7%] mt-20 pt-6 flex flex-col items-center border-r border-gray-300 bg-gray-200 shadow-2xl">
-        <div className="mb-8 px-4 pb-4 flex justify-center text-2xl w-full border-b border-black">
+        <div className="px-4 pb-4 flex justify-center text-2xl w-full border-b border-black">
           <p className="mr-2">Bonjour,</p>
           <span className="font-bold">{username}</span>
         </div>
         {menuComponents.map((menu, index) =>
           <p key={index}
-             className={`w-full mb-8 px-4 py-2 flex justify-center text-lg
+             className={`w-full px-4 py-8 flex justify-center text-lg
               ${selectedItem(menu.name)} transition-all duration-300 cursor-pointer`}
              onClick={() => updateMenu(index)}>
             {menu.name}

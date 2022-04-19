@@ -60,16 +60,18 @@ const postsRoutes = ({ app, logger }) => {
   })
 
   app.post('/posts/update', authMiddleware, async (req, res) => {
-    const { postId, post } = req.body
+    const { postId, updatedValues } = req.body
+
+    logger.info(req.body)
 
     try {
       const updatedPost = await PostModel.query()
-        .patch({title: post.title, content: post.content, last_modification: Date.now()})
+        .patch({title: updatedValues.title, content: updatedValues.content, last_modification: Date.now()})
         .where('post_id', '=', postId)
-      res.send('OK')
+      res.status(200).send(updatedPost)
     } catch (err) {
       logger.error(err)
-      res.status(500).send({ errorMessage: 'Something went wrong' })
+      res.status(500).send({ errorMessage: 'Post haven\'t been updated' })
     }
   })
 

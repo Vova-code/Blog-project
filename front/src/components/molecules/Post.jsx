@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 import { HiOutlineTrash, HiOutlinePencil } from 'react-icons/hi'
 import AppContext from '../../utils/AppContext'
+import UpdatePostForm from './Forms/UpdatePostForm'
 
 const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
 
@@ -14,9 +15,10 @@ const Post = ({ post, isAdminInterface }) => {
                hover:shadow-2xl hover:cursor-pointer transition-all durations-600">
       {isAdminInterface &&
       <div className="absolute flex top-4 right-4">
-        <HiOutlinePencil className="mr-4 text-xl hover:text-blue-600"/>
+        <HiOutlinePencil className="mr-4 text-xl hover:text-blue-600"
+                         onClick={() => openPopin('Modification', <UpdatePostForm post={post} />, post, 'validation')}/>
         <HiOutlineTrash className="mr-4 text-xl hover:text-red-600"
-                        onClick={() => openPopin('Supprimer définitivement', 'Voulez-vous supprimer ce post ?', post.post_id)}/>
+                        onClick={() => openPopin('Supprimer définitivement', 'Voulez-vous supprimer ce post ?', post.post_id, 'delete')}/>
       </div>}
       <h2 className="mb-4 font-semibold text-2xl">{post.title}</h2>
       <span>{post.content}</span>

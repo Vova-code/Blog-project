@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useEffect, useState } from 'react'
 
 import { postsEntryPoint, publicEntrypoint, usersEntryPoint } from './AxiosUtils'
 import { memorizeCredentials, retrieveCredentials, unvalidateCredentials } from './StorageUtils'
@@ -12,7 +12,7 @@ export const AppContextProvider = (props) => {
   const [usersPosts, setUsersPosts] = useState([])
 
   const [showAlertBox, setShowAlertBox] = useState(false)
-  const [popin, setPopin] = useState({title: '', content: '', id: '', isOpen: false})
+  const [popin, setPopin] = useState({ title: '', content: '', data: null, isOpen: false, type: '' })
 
   const router = useRouter()
 
@@ -41,13 +41,12 @@ export const AppContextProvider = (props) => {
     }, 2000)
   }
 
-  const openPopin = (title, content, id) => {
-    console.log(popin)
-    setPopin({title: title, content: content, id: id, isOpen: true})
+  const openPopin = (title, content, data, type) => {
+    setPopin({ title: title, content: content, data: data, isOpen: true, type: type })
   }
 
   const closePopin = () => {
-    setPopin({title: '', content: '', id: '', isOpen: false})
+    setPopin({ title: '', content: '', data: null, isOpen: false, type: '' })
   }
 
   const login = (credentials) => {
@@ -93,7 +92,7 @@ export const AppContextProvider = (props) => {
   }
 
   const deletePost = () => {
-    postsEntryPoint.post('/delete', { postId: popin.id }, {
+    postsEntryPoint.post('/delete', { postId: popin.data }, {
       headers: { 'authentication': userCredentials.token }
     }).then(() => {
       getUserPosts()
@@ -102,12 +101,23 @@ export const AppContextProvider = (props) => {
       .catch(err => sessionExpiredRedirect(err))
   }
 
-  const getUserPosts = () => {
-    postsEntryPoint.get(`/all/${userCredentials.username}`, {
-      headers: { 'authentication': userCredentials.token }
-    })
-      .then(res => setUsersPosts(res.data))
-      .catch(err => sessionExpiredRedirect(err))
+  const getUserPosts = useCallback(() => {
+      postsEntryPoint.get(`/all/${userCredentials.username}`, {
+        headers: { 'authentication': userCredentials.token }
+      })
+        .then(res => setUsersPosts(res.data))
+        .catch(err => sessionExpiredRedirect(err))
+    }, [userCredentials])
+
+  const updatePost = (updatedValues) => {
+    postsEntryPoint.post('/update', { postId: popin.data.post_id, updatedValues },
+      {
+        headers: { 'authentication': userCredentials.token }
+      })
+      .then(() => {
+        getUserPosts()
+      })
+      .catch(err => console.log(err))
   }
 
   return (
@@ -115,7 +125,7 @@ export const AppContextProvider = (props) => {
       {...props}
       value={{
         posts, isUserLogged, username, usersPosts, showAlertBox, popin,
-        showAlert, openPopin, closePopin, getUserPosts, addPost, deletePost,
+        showAlert, openPopin, closePopin, getUserPosts, addPost, deletePost, updatePost,
         getAuthentication, signup, login, logout
       }}
     />

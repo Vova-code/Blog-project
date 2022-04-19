@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Button = ({ text, type, handleClick }) => {
+const Button = ({ text, type, handleClick, isSubmitting }) => {
   let classname
   if (type === 'primary') {
     classname = 'button_primary'
@@ -16,7 +16,8 @@ const Button = ({ text, type, handleClick }) => {
   return (
     <button
       onClick={() => handleClick()}
-      className={classname}>
+      className={classname}
+      disabled={isSubmitting}>
       {text}
     </button>
   )
